@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Seby Runner's – HKS 2026</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -12,186 +12,230 @@
 <meta name="theme-color" content="#185FA5">
 <link rel="manifest" href="manifest.json">
 <style>
-:root {
-  --blue:#185FA5; --blue-d:#0c4480; --blue-l:#378ADD;
-  --red:#C8102E; --red-bg:#fff0f2;
-  --green:#2d7a2d; --green-bg:#edf7ed;
-  --amber:#b86a00; --amber-bg:#fff8ec;
-  --text:#1a1a1a; --muted:#666; --border:#e2e2e2;
-  --bg:#f4f5f7; --card:#fff; --radius:12px;
+:root{
+  --blue:#185FA5;--blue-d:#0c4480;--blue-l:#e8f0fb;
+  --red:#C8102E;--red-l:#fff0f2;
+  --green:#237a23;--green-l:#edf7ed;
+  --amber:#b86a00;--amber-l:#fff8ec;
+  --text:#111;--muted:#777;--border:#e4e4e4;
+  --bg:#f2f3f5;--card:#fff;
+  --r:14px;--r-sm:10px;
+  --tap:52px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;overscroll-behavior:none}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:15px;display:flex;flex-direction:column}
 
-/* HEADER */
-.hdr{background:var(--blue);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.hdr img{width:38px;height:38px;border-radius:6px;flex-shrink:0}
-.hdr-t{font-size:16px;font-weight:700;line-height:1.2}
-.hdr-s{font-size:10px;opacity:.75;margin-top:1px}
+/* ── HEADER ─────────────────────────────── */
+.hdr{background:var(--blue);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hdr img{width:40px;height:40px;border-radius:8px;flex-shrink:0}
+.hdr-t{font-size:17px;font-weight:800;line-height:1.2}
+.hdr-s{font-size:11px;opacity:.7;margin-top:1px}
 .hdr-r{margin-left:auto;text-align:right;flex-shrink:0}
-.hdr-cd{font-family:monospace;font-size:14px;font-weight:800}
-.hdr-cl{font-size:9px;opacity:.65;margin-top:1px}
-.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4cff4c;margin-right:4px;animation:blink 1.4s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hdr-cd{font-family:monospace;font-size:15px;font-weight:800}
+.hdr-cl{font-size:10px;opacity:.6;margin-top:1px}
+.ldot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4cff4c;margin-right:4px;animation:bl 1.4s ease-in-out infinite;vertical-align:middle}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* TABS */
-.tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;position:sticky;top:62px;z-index:90}
+/* ── TABS ───────────────────────────────── */
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);flex-shrink:0;overflow-x:auto}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:1;min-width:70px;padding:11px 6px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .2s}
+.tab{flex:1;min-width:64px;padding:10px 4px 8px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;letter-spacing:.2px}
+.tab .ic{font-size:18px;display:block;margin-bottom:3px}
 .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
-.tab .ti{font-size:16px;display:block;margin-bottom:2px}
 
-/* PAGES */
-.pg{display:none;padding:12px;max-width:800px;margin:0 auto}
+/* ── SCROLL AREA ────────────────────────── */
+.pages{flex:1;overflow:hidden;position:relative}
+.pg{display:none;position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
 .pg.on{display:block}
 
-/* CARDS */
-.card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
-.card-title{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+/* ── CARDS ──────────────────────────────── */
+.card{background:var(--card);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
 
-/* BADGES */
-.badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:10px;font-weight:600}
-.b-live{background:var(--green-bg);color:var(--green)}
+/* ── BADGES ─────────────────────────────── */
+.badge{display:inline-flex;align-items:center;font-size:12px;padding:4px 10px;border-radius:20px;font-weight:700}
+.b-live{background:var(--green-l);color:var(--green)}
 .b-wait{background:#f0f0f0;color:var(--muted)}
-.b-run{background:var(--red-bg);color:var(--red)}
-.b-done{background:#e8f0fe;color:#1a56db}
-.b-err{background:var(--red-bg);color:var(--red)}
-.b-amber{background:var(--amber-bg);color:var(--amber)}
+.b-run{background:var(--red-l);color:var(--red)}
+.b-done{background:var(--blue-l);color:var(--blue)}
+.b-err{background:var(--red-l);color:var(--red)}
+.b-amber{background:var(--amber-l);color:var(--amber)}
 
-/* ─── COUNTDOWN FULLSCREEN ─────────────────────────────── */
-#cdscr{display:none;position:fixed;inset:0;z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;transition:background .5s}
-#cdscr.s-wait{background:#07132b}
-#cdscr.s-soon{background:#3a0510}
-#cdscr.s-run{background:#072b07}
-#cdscr.s-done{background:#1a1a1a}
-.cdx{position:absolute;top:14px;right:16px;color:rgba(255,255,255,.5);font-size:26px;cursor:pointer;background:none;border:none;line-height:1}
-.cd-badge{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px}
-.cd-name{font-size:26px;font-weight:800;color:#fff;margin-bottom:2px}
-.cd-route{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:30px}
-.cd-lbl{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px}
-.cd-num{font-family:monospace;font-size:clamp(60px,18vw,108px);font-weight:900;color:#fff;letter-spacing:2px;line-height:1;margin-bottom:6px;transition:color .3s}
-.cd-num.urgent{color:#ff3333;animation:pu 1s ease-in-out infinite}
-.cd-num.now{color:#33ff33;font-size:clamp(36px,10vw,64px)}
-@keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
-.cd-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:32px}
-.cd-grid{display:flex;gap:28px}
+/* ── FULLSCREEN COUNTDOWN ───────────────── */
+#cdscr{display:none;position:fixed;inset:0;z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;transition:background .4s}
+#cdscr.sw{background:#060e1f}
+#cdscr.ss{background:#300510}
+#cdscr.sr{background:#062006}
+#cdscr.sd{background:#111}
+.cdx{position:absolute;top:16px;right:18px;color:rgba(255,255,255,.45);font-size:32px;cursor:pointer;background:none;border:none;line-height:1;padding:8px;min-width:var(--tap);min-height:var(--tap);display:flex;align-items:center;justify-content:center}
+.cd-et{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px}
+.cd-nm{font-size:clamp(24px,7vw,36px);font-weight:900;color:#fff;margin-bottom:4px}
+.cd-rt{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px}
+.cd-lb{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px}
+.cd-n{font-family:monospace;font-size:clamp(72px,22vw,120px);font-weight:900;color:#fff;letter-spacing:4px;line-height:1;transition:color .3s}
+.cd-n.urg{color:#ff2222;animation:pu 1s ease-in-out infinite}
+.cd-n.now{color:#22ff22;font-size:clamp(40px,12vw,70px)}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.25}}
+.cd-sb{font-size:14px;color:rgba(255,255,255,.45);margin-top:10px;margin-bottom:36px}
+.cd-grd{display:flex;gap:32px;justify-content:center}
 .cd-gi{text-align:center}
-.cd-gv{font-family:monospace;font-size:18px;font-weight:800;color:#fff}
-.cd-gl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
-.cd-alrt{margin-top:28px;padding:9px 20px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.cd-alrt.w{background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
-.cd-alrt.s{background:rgba(255,51,51,.3);color:#ff8888;animation:pu .8s ease-in-out infinite}
+.cd-gv{font-family:monospace;font-size:20px;font-weight:800;color:#fff}
+.cd-gl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:3px}
+.cd-al{margin-top:28px;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.cd-al.w{background:rgba(255,255,255,.07);color:rgba(255,255,255,.35)}
+.cd-al.s{background:rgba(255,30,30,.3);color:#ff8888;animation:pu .8s ease-in-out infinite}
 
-/* ─── MY LEG CARD ──────────────────────────────────────── */
-.mlcard{display:flex;align-items:center;gap:12px;background:var(--blue);color:#fff;border-radius:var(--radius);padding:13px 15px;margin-bottom:12px;cursor:pointer;box-shadow:0 2px 10px rgba(24,95,165,.35);transition:transform .15s}
+/* ── MY LEG CARD ────────────────────────── */
+.mlcard{display:flex;align-items:center;gap:14px;background:var(--blue);color:#fff;border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;box-shadow:0 3px 12px rgba(24,95,165,.35);transition:transform .15s;min-height:var(--tap)}
 .mlcard:active{transform:scale(.98)}
-.mlcirc{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;flex-shrink:0;font-family:monospace}
-.mln{font-size:15px;font-weight:700}
-.mlr{font-size:11px;opacity:.7;margin-top:2px}
-.mlcd{font-family:monospace;font-size:21px;font-weight:900;margin-left:auto;white-space:nowrap}
-.mll{font-size:9px;opacity:.55;text-align:right;margin-top:2px}
-.mltap{font-size:9px;opacity:.4;text-align:right}
+.mlcirc{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;flex-shrink:0;font-family:monospace}
+.ml-i{flex:1;min-width:0}
+.ml-nm{font-size:16px;font-weight:800}
+.ml-rt{font-size:12px;opacity:.65;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ml-r{text-align:right;flex-shrink:0}
+.ml-cd{font-family:monospace;font-size:22px;font-weight:900}
+.ml-lb{font-size:10px;opacity:.55;margin-top:3px}
+.ml-tap{font-size:10px;opacity:.35;margin-top:2px}
 
-/* DELTA BAR */
-.dbar{border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;margin-bottom:10px;display:none}
-.dbar.a{background:var(--green-bg);color:var(--green)}
-.dbar.b{background:var(--red-bg);color:var(--red)}
+/* ── DELTA BAR ──────────────────────────── */
+.dbar{border-radius:var(--r-sm);padding:10px 14px;font-size:13px;font-weight:700;margin-bottom:10px;display:none}
+.dbar.a{background:var(--green-l);color:var(--green)}
+.dbar.b{background:var(--red-l);color:var(--red)}
 
-/* HINT */
-.hint{font-size:11px;color:var(--muted);background:#f5f5f5;border-radius:6px;padding:6px 10px;margin-bottom:10px}
+/* ── LEG CARDS (Plan) ───────────────────── */
+.leg-card{background:var(--card);border-radius:var(--r);margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);border:2px solid transparent;transition:border-color .2s}
+.leg-card.lc-run{border-color:var(--red);background:var(--red-l)}
+.leg-card.lc-mine{border-color:var(--blue)}
+.leg-card.lc-next{border-color:var(--amber)}
+.leg-card.lc-done{opacity:.45}
+.lc-main{display:flex;align-items:center;gap:12px;padding:13px 14px;min-height:var(--tap)}
+.lc-num{font-family:monospace;font-size:12px;font-weight:800;color:var(--muted);width:20px;flex-shrink:0;text-align:center}
+.lc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.lc-info{flex:1;min-width:0}
+.lc-runner{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-route{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lc-right{flex-shrink:0;text-align:right}
+.lc-time{font-family:monospace;font-size:13px;font-weight:700;color:var(--muted)}
+.lc-time.adj{color:var(--red)}
+.lc-time.lv{color:var(--blue)}
+.lc-km{font-size:11px;color:var(--muted);margin-top:2px}
+.mine-btn{font-size:12px;padding:0 12px;height:36px;border-radius:18px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-weight:700;white-space:nowrap;flex-shrink:0;display:flex;align-items:center}
+.mine-btn.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.lc-expand{background:none;border:none;padding:6px 14px 10px;font-size:13px;color:var(--blue);cursor:pointer;width:100%;text-align:left;font-weight:600}
 
-/* TABLE */
-.tw{overflow-x:auto;margin:0 -4px}
-table{width:100%;border-collapse:collapse;min-width:460px}
-th{font-size:10px;font-weight:700;color:var(--muted);padding:6px 5px;border-bottom:1.5px solid var(--border);text-align:left;white-space:nowrap;text-transform:uppercase;letter-spacing:.4px}
-td{padding:7px 5px;border-bottom:1px solid #f2f2f2;vertical-align:middle}
-tr:last-child td{border:none}
-tr.tr-run td{background:#fff8f8}
-tr.tr-done td{opacity:.45}
-tr.tr-mine td{background:#f0f6ff}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;vertical-align:middle}
-.dd{background:var(--green)}
-.dr{background:var(--red);animation:blink 1s ease-in-out infinite}
-.dw{background:#ccc}
-.mono{font-family:monospace}
-.adj{color:var(--red);font-weight:700}
-.lv{color:var(--blue);font-weight:700}
-input.ei{font-size:12px;padding:3px 6px;border:1.5px solid var(--blue);border-radius:4px;width:100%;min-width:80px;font-family:inherit}
-input.et{font-family:monospace;font-size:12px;padding:3px 5px;border:1.5px solid var(--blue);border-radius:4px;width:78px}
-.mb{font-size:10px;padding:3px 7px;border-radius:10px;border:1px solid #ccc;background:#fff;color:var(--muted);cursor:pointer;white-space:nowrap}
-.mb.on{background:var(--blue);color:#fff;border-color:var(--blue)}
-.leg-name{cursor:pointer}
-.leg-name:hover{text-decoration:underline;color:var(--blue)}
-.leg-time{cursor:pointer;font-family:monospace;font-size:12px;color:var(--muted)}
-.leg-time:hover{text-decoration:underline;color:var(--blue)}
+/* Edit panel */
+.lc-edit{padding:0 14px 12px;border-top:1px solid var(--border);display:none}
+.lc-edit.open{display:block}
+.edit-row{display:flex;gap:8px;margin-top:10px;align-items:center}
+.edit-lbl{font-size:12px;color:var(--muted);font-weight:600;width:80px;flex-shrink:0}
+.edit-inp{flex:1;font-size:14px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;background:#fff;color:var(--text)}
+.edit-inp:focus{border-color:var(--blue);outline:none}
+.edit-inp.mono{font-family:monospace}
+.edit-save{margin-top:10px;width:100%;padding:10px;border-radius:10px;background:var(--blue);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer}
 
-/* ─── SPECTATOR MODE ───────────────────────────────────── */
-.spec-grid{display:grid;grid-template-columns:1fr;gap:8px}
-.spec-row{border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);background:var(--card);transition:all .3s}
-.spec-row.s-run{background:#fff0f2;border-color:var(--red);box-shadow:0 2px 12px rgba(200,16,46,.15)}
-.spec-row.s-done{opacity:.45}
-.spec-row.s-next{background:var(--amber-bg);border-color:#e8a000}
-.spec-num{font-family:monospace;font-size:13px;font-weight:800;color:var(--muted);width:22px;flex-shrink:0}
-.spec-info{flex:1;min-width:0}
-.spec-runner{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.spec-route{font-size:11px;color:var(--muted);margin-top:1px}
-.spec-right{text-align:right;flex-shrink:0}
-.spec-time{font-family:monospace;font-size:15px;font-weight:800}
-.spec-label{font-size:9px;color:var(--muted);margin-top:1px;text-transform:uppercase;letter-spacing:.5px}
-.now-banner{background:var(--red);color:#fff;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
-.now-big{font-size:22px;font-weight:900}
-.now-sub{font-size:11px;opacity:.8;margin-top:2px}
-.now-cd{font-family:monospace;font-size:28px;font-weight:900;margin-left:auto}
+/* ── SPECTATOR ───────────────────────────── */
+.now-card{background:var(--red);color:#fff;border-radius:var(--r);padding:18px 16px;margin-bottom:10px;display:none}
+.now-lbl{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+.now-name{font-size:26px;font-weight:900;line-height:1.1}
+.now-route{font-size:13px;opacity:.65;margin-top:4px}
+.now-bot{display:flex;align-items:flex-end;justify-content:space-between;margin-top:16px}
+.now-next-lbl{font-size:11px;opacity:.65}
+.now-next-name{font-size:14px;font-weight:700;margin-top:2px}
+.now-cd{font-family:monospace;font-size:40px;font-weight:900;line-height:1}
+.now-cd-lbl{font-size:11px;opacity:.6;text-align:right;margin-top:2px}
 
-/* ─── STATISTICS ───────────────────────────────────────── */
-.stat-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.stat-box{background:var(--card);border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.stat-val{font-family:monospace;font-size:20px;font-weight:800;color:var(--blue)}
-.stat-lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
-.pace-bar{height:4px;border-radius:2px;background:#e8e8e8;margin-top:4px;overflow:hidden}
-.pace-fill{height:100%;border-radius:2px;background:var(--blue);transition:width .5s}
-.pace-fill.fast{background:var(--green)}
-.pace-fill.slow{background:var(--red)}
-.dev-pos{color:var(--green);font-weight:700}
-.dev-neg{color:var(--red);font-weight:700}
-.best-badge{background:var(--green-bg);color:var(--green);font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700}
-.worst-badge{background:var(--red-bg);color:var(--red);font-size:9px;padding:1px 5px;border-radius:4px;font-weight:700}
-.stat-input{font-family:monospace;font-size:12px;padding:3px 5px;border:1.5px solid #ddd;border-radius:4px;width:78px}
-.stat-input:focus{border-color:var(--blue);outline:none}
-.stat-note{font-size:11px;color:var(--muted);margin-bottom:8px}
+.spec-card{background:var(--card);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;border:1.5px solid transparent;min-height:56px}
+.spec-card.sc-run{background:var(--red-l);border-color:var(--red)}
+.spec-card.sc-next{background:var(--amber-l);border-color:var(--amber)}
+.spec-card.sc-done{opacity:.38}
+.sc-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.sc-info{flex:1;min-width:0}
+.sc-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-route{font-size:11px;color:var(--muted);margin-top:2px}
+.sc-r{text-align:right;flex-shrink:0}
+.sc-time{font-family:monospace;font-size:16px;font-weight:800}
+.sc-lbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
 
-/* BUTTONS */
-button{padding:8px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:13px;font-weight:500;transition:background .15s}
-button:hover{background:#f5f5f5}
-button.pr{background:var(--blue);color:#fff;border-color:var(--blue)}
-button.pr:hover{background:var(--blue-d)}
-button.sm{padding:5px 11px;font-size:12px}
+/* ── STATISTICS ─────────────────────────── */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.sum-box{background:var(--card);border-radius:var(--r-sm);padding:12px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.sum-val{font-family:monospace;font-size:20px;font-weight:900;color:var(--blue)}
+.sum-lbl{font-size:10px;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
 
-/* LEGEND */
-.legend{display:flex;gap:12px;font-size:11px;color:var(--muted);flex-wrap:wrap;margin-top:8px}
-.spn{display:inline-block;width:10px;height:10px;border:2px solid #ddd;border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:3px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.footer{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-top:1px solid var(--border);font-size:11px;color:var(--muted);position:sticky;bottom:0;z-index:80}
+.stat-leg{background:var(--card);border-radius:var(--r);margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.sl-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;min-height:var(--tap)}
+.sl-num{font-family:monospace;font-size:12px;font-weight:800;color:var(--muted);width:24px;flex-shrink:0}
+.sl-info{flex:1;min-width:0}
+.sl-name{font-size:14px;font-weight:700}
+.sl-km{font-size:11px;color:var(--muted);margin-top:1px}
+.sl-r{text-align:right;flex-shrink:0}
+.sl-split{font-family:monospace;font-size:15px;font-weight:800}
+.sl-pace{font-size:11px;color:var(--muted);margin-top:2px}
+.sl-dev-pos{color:var(--green);font-size:12px;font-weight:700}
+.sl-dev-neg{color:var(--red);font-size:12px;font-weight:700}
+.sl-body{border-top:1px solid var(--border);padding:12px 14px;display:none}
+.sl-body.open{display:block}
+.sl-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:13px}
+.sl-row:last-child{border:none}
+.sl-rlbl{color:var(--muted);font-weight:600}
+.sl-rval{font-family:monospace;font-weight:700}
+.sl-input{font-family:monospace;font-size:13px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;width:90px;text-align:center}
+.sl-input:focus{border-color:var(--blue);outline:none}
+.best-tag{background:var(--green-l);color:var(--green);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:800;margin-left:6px}
+.worst-tag{background:var(--red-l);color:var(--red);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:800;margin-left:6px}
+
+/* ── LIVE ───────────────────────────────── */
+.live-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.live-tbl th{padding:6px 8px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.4px}
+.live-tbl td{padding:7px 8px;border-bottom:1px solid #f5f5f5}
+.live-tbl tr.seby td{background:rgba(200,16,46,.05);font-weight:700}
+
+/* ── REDIGER ─────────────────────────────── */
+.red-card{background:var(--card);border-radius:var(--r);margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.red-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;min-height:var(--tap)}
+.red-num{font-family:monospace;font-size:12px;font-weight:800;color:var(--muted);width:24px}
+.red-name{font-size:14px;font-weight:700;flex:1}
+.red-time{font-family:monospace;font-size:13px;color:var(--muted)}
+.red-body{border-top:1px solid var(--border);padding:14px;display:none}
+.red-body.open{display:block}
+
+/* ── BUTTONS ─────────────────────────────── */
+button{cursor:pointer;font-family:inherit}
+.btn{padding:10px 16px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:700;color:var(--text);min-height:var(--tap);display:inline-flex;align-items:center;justify-content:center}
+.btn:active{opacity:.8}
+.btn.pr{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:13px;border-radius:8px}
+.btn.full{width:100%}
+.btn.danger{color:var(--red);border-color:var(--red)}
+
+/* ── FOOTER ──────────────────────────────── */
+.footer{background:#fff;border-top:1px solid var(--border);padding:8px 14px;font-size:11px;color:var(--muted);display:flex;align-items:center;flex-shrink:0;min-height:36px}
 .footer span{flex:1}
+
+/* ── UTIL ────────────────────────────────── */
+.mono{font-family:monospace}
+.spn{display:inline-block;width:10px;height:10px;border:2px solid #ddd;border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
 <!-- FULLSCREEN COUNTDOWN -->
-<div id="cdscr" class="s-wait">
+<div id="cdscr" class="sw">
   <button class="cdx" onclick="closeCd()">✕</button>
-  <div class="cd-badge" id="cd-badge">Etappe –</div>
-  <div class="cd-name" id="cd-name">–</div>
-  <div class="cd-route" id="cd-route">–</div>
-  <div class="cd-lbl" id="cd-lbl">DU BYTTER OM</div>
-  <div class="cd-num" id="cd-num">--:--</div>
-  <div class="cd-sub" id="cd-sub">–</div>
-  <div class="cd-grid">
+  <div class="cd-et" id="cd-et">–</div>
+  <div class="cd-nm" id="cd-nm">–</div>
+  <div class="cd-rt" id="cd-rt">–</div>
+  <div class="cd-lb" id="cd-lb">DU BYTTER OM</div>
+  <div class="cd-n" id="cd-n">--:--</div>
+  <div class="cd-sb" id="cd-sb">–</div>
+  <div class="cd-grd">
     <div class="cd-gi"><div class="cd-gv" id="cd-now">–</div><div class="cd-gl">Klokken nå</div></div>
     <div class="cd-gi"><div class="cd-gv" id="cd-est">–</div><div class="cd-gl">Din start</div></div>
     <div class="cd-gi"><div class="cd-gv" id="cd-km">–</div><div class="cd-gl">km</div></div>
   </div>
-  <div class="cd-alrt w" id="cd-alrt">Stå klar i god tid!</div>
+  <div class="cd-al w" id="cd-al">Stå klar i god tid!</div>
 </div>
 
 <!-- HEADER -->
@@ -209,126 +253,87 @@ button.sm{padding:5px 11px;font-size:12px}
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab on" onclick="gt('plan',this)"><span class="ti">📋</span>Plan</div>
-  <div class="tab" onclick="gt('spec',this)"><span class="ti">👁️</span>Tilskuer</div>
-  <div class="tab" onclick="gt('stat',this)"><span class="ti">📊</span>Statistikk</div>
-  <div class="tab" onclick="gt('live',this)"><span class="ti">📡</span>Live</div>
-  <div class="tab" onclick="gt('red',this)"><span class="ti">✏️</span>Rediger</div>
+  <div class="tab on" onclick="gt('plan',this)"><span class="ic">📋</span>Plan</div>
+  <div class="tab" onclick="gt('spec',this)"><span class="ic">👁️</span>Tilskuer</div>
+  <div class="tab" onclick="gt('stat',this)"><span class="ic">📊</span>Statistikk</div>
+  <div class="tab" onclick="gt('live',this)"><span class="ic">📡</span>Live</div>
+  <div class="tab" onclick="gt('red',this)"><span class="ic">✏️</span>Rediger</div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- PAGE: PLAN                                             -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SCROLL PAGES -->
+<div class="pages">
+
+<!-- ══ PLAN ══════════════════════════════ -->
 <div class="pg on" id="pg-plan">
   <div id="ml-wrap"></div>
   <div class="dbar" id="dbar"></div>
-  <div class="card" style="padding:10px">
-    <div class="hint">Klikk navn eller klokkeslett for å redigere · Trykk "Min" for din etappe · Trykk kortet for fullskjerm-nedtelling</div>
-    <div class="tw">
-      <table>
-        <thead><tr>
-          <th>#</th><th>km</th><th>Etappe</th><th>Løper</th>
-          <th>Est. start</th><th>Varighet</th><th>Justert</th><th></th>
-        </tr></thead>
-        <tbody id="plan-body"></tbody>
-      </table>
-    </div>
-    <div class="legend">
-      <span><span class="dot dw"></span> Venter</span>
-      <span><span class="dot dr"></span> Løper nå</span>
-      <span><span class="dot dd"></span> Ferdig</span>
-      <span style="color:var(--blue)">■</span> Min etappe
-      <span style="color:var(--red)">■</span> Justert tid
-    </div>
-  </div>
+  <div id="plan-list"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- PAGE: SPECTATOR                                        -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ══ SPECTATOR ══════════════════════════ -->
 <div class="pg" id="pg-spec">
-  <div class="card" style="padding:10px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-    <span id="spec-badge" class="badge b-wait">Venter på start</span>
-    <span style="font-size:12px;color:var(--muted)">Auto-refresh</span>
-    <span id="spec-refresh" style="font-size:11px;color:var(--muted)">–</span>
-    <span style="font-size:11px;color:var(--muted);margin-left:auto" id="spec-last"></span>
+  <div class="card" style="padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <span id="spec-badge" class="badge b-wait">Venter</span>
+    <span style="font-size:12px;color:var(--muted);margin-left:auto" id="spec-last"></span>
   </div>
-
-  <div id="now-banner" style="display:none" class="now-banner">
-    <div>
-      <div style="font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:1px">Løper nå</div>
-      <div class="now-big" id="now-runner">–</div>
-      <div class="now-sub" id="now-route">–</div>
-    </div>
-    <div style="margin-left:auto;text-align:right">
-      <div style="font-size:10px;opacity:.7">Neste veksling om</div>
-      <div class="now-cd" id="now-cd">–:––</div>
-      <div style="font-size:10px;opacity:.6" id="now-next">–</div>
+  <div class="now-card" id="now-card">
+    <div class="now-lbl">Løper nå 🏃</div>
+    <div class="now-name" id="now-nm">–</div>
+    <div class="now-route" id="now-rt">–</div>
+    <div class="now-bot">
+      <div>
+        <div class="now-next-lbl">Neste løper</div>
+        <div class="now-next-name" id="now-nxt">–</div>
+      </div>
+      <div style="text-align:right">
+        <div class="now-cd" id="now-cd">–:––</div>
+        <div class="now-cd-lbl">til veksling</div>
+      </div>
     </div>
   </div>
-
-  <div class="spec-grid" id="spec-grid"></div>
+  <div id="spec-list"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- PAGE: STATISTICS                                       -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ══ STATISTIKK ═════════════════════════ -->
 <div class="pg" id="pg-stat">
-  <div class="stat-summary">
-    <div class="stat-box"><div class="stat-val" id="st-total">–</div><div class="stat-lbl">Total tid</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-pace">–</div><div class="stat-lbl">Snitt tempo</div></div>
-    <div class="stat-box"><div class="stat-val" id="st-pos">–</div><div class="stat-lbl">Plassering</div></div>
+  <div class="sum-grid">
+    <div class="sum-box"><div class="sum-val" id="st-tot">–</div><div class="sum-lbl">Total tid</div></div>
+    <div class="sum-box"><div class="sum-val" id="st-pc">–</div><div class="sum-lbl">Snitt/km</div></div>
+    <div class="sum-box"><div class="sum-val" id="st-pos">–</div><div class="sum-lbl">Plassering</div></div>
   </div>
-
-  <div class="card" style="padding:10px">
-    <div class="card-title">Etappestatistikk</div>
-    <p class="stat-note">Faktiske vekslingstider hentes automatisk fra live-data. Du kan også taste inn manuelt.</p>
-    <div class="tw">
-      <table>
-        <thead><tr>
-          <th>#</th><th>Løper</th><th>km</th>
-          <th>Est. start</th><th>Faktisk start</th>
-          <th>Etappetid</th><th>Tempo</th><th>Avvik</th><th></th>
-        </tr></thead>
-        <tbody id="stat-body"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="card">
+  <div id="stat-list"></div>
+  <div class="card" id="highlights-card">
     <div class="card-title">Høydepunkter</div>
-    <div id="highlights" style="font-size:13px;color:var(--muted)">Ingen data ennå – data fylles inn under løpet.</div>
+    <div id="highlights" style="font-size:13px;color:var(--muted)">Fylles inn under løpet.</div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- PAGE: LIVE                                             -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ══ LIVE ═══════════════════════════════ -->
 <div class="pg" id="pg-live">
   <div class="card">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <span id="live-badge" class="badge b-wait">Ikke hentet</span>
       <span style="font-size:11px;color:var(--muted)" id="live-last"></span>
-      <button class="sm pr" style="margin-left:auto" onclick="fetchNow()">Hent nå ↗</button>
+      <button class="btn sm pr" style="margin-left:auto" onclick="fetchNow()">Hent nå ↗</button>
     </div>
-    <div id="live-area"><p style="color:var(--muted)">Data hentes automatisk hvert 30. sekund under løpet.</p></div>
+    <div id="live-area"><p style="color:var(--muted);font-size:13px;line-height:1.6">Henter automatisk hvert 30. sek under løpet etter 14:40.</p></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- PAGE: REDIGER                                          -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ══ REDIGER ════════════════════════════ -->
 <div class="pg" id="pg-red">
-  <div class="card">
-    <div class="card-title">Rediger lag</div>
-    <div id="red-list"></div>
-    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-      <button class="pr" onclick="saveAll()">Lagre alle</button>
-      <button onclick="if(confirm('Tilbakestille?'))resetAll()">Tilbakestill</button>
-      <button onclick="if(confirm('Slette all statistikk?'))clearStats()">Nullstill statistikk</button>
-    </div>
+  <div class="card" style="margin-bottom:10px">
+    <p style="font-size:13px;color:var(--muted);line-height:1.5">Trykk på en etappe for å redigere løpernavn og estimert starttid.</p>
+  </div>
+  <div id="red-list"></div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+    <button class="btn pr full" onclick="saveAll()">💾 Lagre alle endringer</button>
+    <button class="btn full" onclick="if(confirm('Nullstille statistikk?'))clearStats()">🗑 Nullstill statistikk</button>
+    <button class="btn full danger" onclick="if(confirm('Tilbakestille alt?'))resetAll()">↩ Tilbakestill alt</button>
   </div>
 </div>
+
+</div><!-- /pages -->
 
 <!-- FOOTER -->
 <div class="footer">
@@ -337,504 +342,355 @@ button.sm{padding:5px 11px;font-size:12px}
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════════
-const SKEY = 'seby_hks26_v4';
-const PROXY = 'https://corsproxy.io/?url=';
-const API = 'https://live.ultimate.dk/desktop/front/data.php';
-const EID = '6082';
-const RACE_DATE = new Date(2026,4,9);
+// ═══════ DATA ══════════════════════════════════════════════
+const SKEY='seby_hks26_v5';
+const PROXY='https://corsproxy.io/?url=';
+const API='https://live.ultimate.dk/desktop/front/data.php';
+const EID='6082';
 
-const DEFAULT = [
-  {leg:1,  km:1.10, route:'Rundt st. haugen',                       runner:'Svein Rune Hagen',           est:'14:50:00'},
-  {leg:2,  km:1.07, route:'Louisesgate',                            runner:'Bjørn Ove Liavaag',          est:'14:54:17'},
-  {leg:3,  km:0.60, route:'Wolffs gate',                            runner:'Siri Hansen Weydahl',        est:'14:58:48'},
-  {leg:4,  km:1.84, route:'Wilh. Færdens vei',                      runner:'James Sunde',                est:'15:01:41'},
-  {leg:5,  km:1.26, route:'Forskningsparken',                       runner:'Jørgen Alne',                est:'15:09:11'},
-  {leg:6,  km:1.24, route:'Vindern (slak oppover)',                 runner:'Erik Gunnes',                est:'15:14:26'},
-  {leg:7,  km:1.79, route:'Slemdal (mye oppover)',                  runner:'Eirik Degnes',               est:'15:23:59'},
-  {leg:8,  km:1.81, route:'Besserud (mye nedover)',                 runner:'Håkon Falldalen',            est:'15:31:02'},
-  {leg:9,  km:0.63, route:'Gressbanen',                             runner:'Knut Inge Bjerklund',        est:'15:36:41'},
-  {leg:10, km:2.84, route:'Holmendammen',                           runner:'Marius Fretheim Pettersen',  est:'15:38:56'},
-  {leg:11, km:1.53, route:'Frognerparken',                          runner:'Øyvind Thomassen',           est:'15:48:20'},
-  {leg:12, km:0.37, route:'Nordraaksgate',                          runner:'Fredrik Grefslie',           est:'15:55:23'},
-  {leg:13, km:1.08, route:'Arno Bergs pl.',                         runner:'Lene Bergli',                est:'15:56:34'},
-  {leg:14, km:0.84, route:'Camilla Collets vei (sjarmøretappen)',   runner:'Kristin Rove Bentsen',       est:'15:59:03'},
-  {leg:15, km:0.61, route:'Marathonporten (Bislett stadion)',        runner:'Lars Sikkeland',             est:'16:01:07'},
+const DEFAULT=[
+  {leg:1,  km:1.10,route:'Rundt st. haugen',                      runner:'Svein Rune Hagen',          est:'14:50:00'},
+  {leg:2,  km:1.07,route:'Louisesgate',                           runner:'Bjørn Ove Liavaag',         est:'14:54:17'},
+  {leg:3,  km:0.60,route:'Wolffs gate',                           runner:'Siri Hansen Weydahl',       est:'14:58:48'},
+  {leg:4,  km:1.84,route:'Wilh. Færdens vei',                     runner:'James Sunde',               est:'15:01:41'},
+  {leg:5,  km:1.26,route:'Forskningsparken',                      runner:'Jørgen Alne',               est:'15:09:11'},
+  {leg:6,  km:1.24,route:'Vindern (slak oppover)',                runner:'Erik Gunnes',               est:'15:14:26'},
+  {leg:7,  km:1.79,route:'Slemdal (mye oppover)',                 runner:'Eirik Degnes',              est:'15:23:59'},
+  {leg:8,  km:1.81,route:'Besserud (mye nedover)',                runner:'Håkon Falldalen',           est:'15:31:02'},
+  {leg:9,  km:0.63,route:'Gressbanen',                            runner:'Knut Inge Bjerklund',       est:'15:36:41'},
+  {leg:10, km:2.84,route:'Holmendammen',                          runner:'Marius Fretheim Pettersen', est:'15:38:56'},
+  {leg:11, km:1.53,route:'Frognerparken',                         runner:'Øyvind Thomassen',          est:'15:48:20'},
+  {leg:12, km:0.37,route:'Nordraaksgate',                         runner:'Fredrik Grefslie',          est:'15:55:23'},
+  {leg:13, km:1.08,route:'Arno Bergs pl.',                        runner:'Lene Bergli',               est:'15:56:34'},
+  {leg:14, km:0.84,route:'Camilla Collets vei',                   runner:'Kristin Rove Bentsen',      est:'15:59:03'},
+  {leg:15, km:0.61,route:'Marathonporten (Bislett)',               runner:'Lars Sikkeland',            est:'16:01:07'},
 ];
 
-let team = DEFAULT.map(d=>({...d}));
-let myLeg = null;
-let liveAdj = 0;
-let actualTimes = {}; // leg index -> actual HH:MM:SS
-let position = '–';
-let cdTimer = null;
-let refreshTimer = null;
-let lastFetch = null;
-let refreshCount = 0;
+let team=DEFAULT.map(d=>({...d}));
+let myLeg=null, liveAdj=0, actualTimes={}, position='–';
+let cdTmr=null, refTmr=null, lastFetch=null;
 
-// ═══════════════════════════════════════════════════════════
-// DATE HELPERS
-// ═══════════════════════════════════════════════════════════
-function td(hms) {
-  const [h,m,s]=(hms||'00:00:00').split(':').map(Number);
-  return new Date(2026,4,9,h,m,s||0);
+// ═══════ HELPERS ═══════════════════════════════════════════
+const td=hms=>{const[h,m,s]=(hms||'00:00:00').split(':').map(Number);return new Date(2026,4,9,h,m,s||0)};
+const fh=d=>{if(typeof d==='string')d=td(d);return`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`};
+const adjStart=i=>actualTimes[i]?td(actualTimes[i]):new Date(td(team[i].est).getTime()+liveAdj);
+const legEnd=i=>i<14?adjStart(i+1):new Date(2026,4,9,16,3,35);
+const legStatus=i=>{const n=new Date(),s=adjStart(i),e=legEnd(i);return n<s?'wait':n<e?'run':'done'};
+const msfmt=ms=>{if(ms<=0)return null;const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);return h>0?`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`};
+const dfmt=ms=>{const neg=ms<0,abs=Math.abs(ms),m=Math.floor(abs/60000),s=Math.floor((abs%60000)/1000);return`${neg?'-':'+'}${m}m${String(s).padStart(2,'0')}s`};
+function splitMs(i){
+  const s=actualTimes[i]?td(actualTimes[i]):td(team[i].est);
+  const e=i<14?(actualTimes[i+1]?td(actualTimes[i+1]):td(team[i+1].est)):new Date(2026,4,9,16,3,35);
+  return e-s;
 }
-function fh(d) {
-  if(typeof d==='string') d=td(d);
-  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+function paceFmt(i){
+  const ms=splitMs(i);if(ms<=0||!team[i].km)return'–';
+  const sec=(ms/1000)/team[i].km,m=Math.floor(sec/60),s=Math.round(sec%60);
+  return`${m}:${String(s).padStart(2,'0')}/km`;
 }
-function adjStart(i) {
-  if(actualTimes[i]) return td(actualTimes[i]);
-  return new Date(td(team[i].est).getTime()+liveAdj);
-}
-function legStatus(i) {
-  const now=new Date(), s=adjStart(i);
-  const e=i<14?adjStart(i+1):new Date(2026,4,9,16,3,35);
-  if(now<s) return 'wait';
-  if(now<e) return 'run';
-  return 'done';
-}
-function legDur(i) {
-  if(i>=14) return '–';
-  const a=td(team[i].est), b=td(team[i+1].est);
-  const d=b-a, m=Math.floor(d/60000), s=Math.floor((d%60000)/1000);
-  return m+':'+String(s).padStart(2,'0');
-}
-function msfmt(ms) {
-  if(ms<0) return null;
-  const h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);
-  if(h>0) return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-}
-function diffFmt(ms) {
-  const neg=ms<0, abs=Math.abs(ms);
-  const m=Math.floor(abs/60000),s=Math.floor((abs%60000)/1000);
-  return (neg?'-':'+')+m+'m'+String(s).padStart(2,'0')+'s';
-}
+function splitFmt(i){const ms=splitMs(i);if(ms<=0)return'–';const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000);return`${m}:${String(s).padStart(2,'0')}`}
+function devMs(i){if(!actualTimes[i])return null;return td(actualTimes[i])-td(team[i].est)}
 
-// Split time for leg i (from actual or estimated)
-function splitMs(i) {
-  const startI = actualTimes[i] ? td(actualTimes[i]) : td(team[i].est);
-  const endI   = i<14 ? (actualTimes[i+1] ? td(actualTimes[i+1]) : td(team[i+1].est)) : new Date(2026,4,9,16,3,35);
-  return endI - startI;
-}
-function splitFmt(i) {
-  const ms=splitMs(i);
-  if(ms<=0) return '–';
-  const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000);
-  return m+':'+String(s).padStart(2,'0');
-}
-function paceFmt(i) {
-  const ms=splitMs(i);
-  if(ms<=0||!team[i].km) return '–';
-  const secPerKm=(ms/1000)/team[i].km;
-  const m=Math.floor(secPerKm/60),s=Math.round(secPerKm%60);
-  return m+':'+String(s).padStart(2,'0')+'/km';
-}
-function deviationMs(i) {
-  if(!actualTimes[i]) return null;
-  const act=td(actualTimes[i]), est=td(team[i].est);
-  return act-est;
-}
-
-// ═══════════════════════════════════════════════════════════
-// RENDER: PLAN
-// ═══════════════════════════════════════════════════════════
-function renderPlan() {
-  const tb=document.getElementById('plan-body');
-  tb.innerHTML='';
-  team.forEach((leg,i)=>{
-    const st=legStatus(i), mine=myLeg===i;
-    const adj=adjStart(i), adjStr=fh(adj);
-    const isLive=!!actualTimes[i], isAdj=!isLive&&liveAdj!==0;
-    const dot=st==='done'?'dd':st==='run'?'dr':'dw';
-    let cls=st==='run'?'tr-run':st==='done'?'tr-done':'';
-    if(mine) cls+=' tr-mine';
-    const adjCell=isLive?`<span class="mono lv">🟢 ${adjStr}</span>`:isAdj?`<span class="mono adj">${adjStr}</span>`:`<span style="color:#ccc">–</span>`;
-    const tr=document.createElement('tr');
-    tr.className=cls;
-    tr.innerHTML=`
-      <td><span class="dot ${dot}"></span><span class="mono" style="font-size:11px;color:#999;margin-left:3px">${leg.leg}</span></td>
-      <td><span class="mono" style="font-size:11px;color:#999">${leg.km}</span></td>
-      <td style="font-size:12px;color:#555;max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${leg.route}</td>
-      <td class="rc" data-i="${i}"><span class="leg-name" onclick="editR(${i})">${leg.runner}</span></td>
-      <td class="tc" data-i="${i}"><span class="leg-time" onclick="editT(${i})">${leg.est}</span></td>
-      <td><span class="mono" style="font-size:11px;color:#999">${legDur(i)}</span></td>
-      <td>${adjCell}</td>
-      <td><button class="mb${mine?' on':''}" onclick="setMine(${i})">${mine?'✓ Min':'Min'}</button></td>`;
-    tb.appendChild(tr);
-  });
-
+// ═══════ PLAN RENDER ════════════════════════════════════════
+function renderPlan(){
   // My leg card
   const mlw=document.getElementById('ml-wrap');
   if(myLeg!==null){
-    const leg=team[myLeg], adj=adjStart(myLeg), diff=adj-new Date(), st=legStatus(myLeg);
-    const cdTxt=diff>0?msfmt(diff):(st==='run'?'DU LØPER NÅ!':'Ferdig ✓');
-    const lbl=diff>0?'til din start':(st==='run'?'🏃 Løp!':'');
+    const leg=team[myLeg],adj=adjStart(myLeg),diff=adj-new Date(),st=legStatus(myLeg);
+    const ct=diff>0?msfmt(diff):st==='run'?'DU LØPER NÅ!':'Ferdig ✓';
+    const lb=diff>0?'til din start':st==='run'?'🏃':'';
     mlw.innerHTML=`<div class="mlcard" onclick="openCd()">
       <div class="mlcirc">${leg.leg}</div>
-      <div style="flex:1;min-width:0"><div class="mln">${leg.runner}</div><div class="mlr">${leg.route} · ${leg.km} km</div></div>
-      <div><div class="mlcd">${cdTxt}</div><div class="mll">${lbl}</div><div class="mltap">👆 Fullskjerm</div></div>
+      <div class="ml-i"><div class="ml-nm">${leg.runner}</div><div class="ml-rt">Et.${leg.leg} · ${leg.route} · ${leg.km}km</div></div>
+      <div class="ml-r"><div class="ml-cd">${ct}</div><div class="ml-lb">${lb}</div><div class="ml-tap">👆 Fullskjerm</div></div>
     </div>`;
-  } else { mlw.innerHTML=''; }
+  } else {mlw.innerHTML='';}
 
   // Delta bar
   const db=document.getElementById('dbar');
-  if(liveAdj!==0){
-    db.style.display='block';
-    db.className='dbar '+(liveAdj<0?'a':'b');
-    db.textContent=liveAdj<0?`🟢 Laget er ${diffFmt(Math.abs(liveAdj))} foran estimat – tider oppdatert`:`🔴 Laget er ${diffFmt(liveAdj)} bak estimat – tider oppdatert`;
-  } else { db.style.display='none'; }
+  if(liveAdj!==0){db.style.display='block';db.className='dbar '+(liveAdj<0?'a':'b');db.textContent=liveAdj<0?`🟢 Foran estimat ${dfmt(Math.abs(liveAdj))} – tider oppdatert`:`🔴 Bak estimat ${dfmt(liveAdj)} – tider oppdatert`;}
+  else db.style.display='none';
+
+  // Leg cards
+  const list=document.getElementById('plan-list');
+  list.innerHTML='';
+  team.forEach((leg,i)=>{
+    const st=legStatus(i),mine=myLeg===i;
+    const adj=adjStart(i),isLive=!!actualTimes[i],isAdj=!isLive&&liveAdj!==0;
+    const dot=st==='done'?'background:var(--green)':st==='run'?'background:var(--red)':'background:#ccc';
+    let cls='leg-card';
+    if(st==='run')cls+=' lc-run';
+    else if(mine)cls+=' lc-mine';
+    else if(i===getNextIdx())cls+=' lc-next';
+    else if(st==='done')cls+=' lc-done';
+    const adjStr=fh(adj);
+    const tcls=isLive?'lc-time lv':isAdj?'lc-time adj':'lc-time';
+    const tval=isLive?`🟢 ${adjStr}`:isAdj?adjStr:leg.est;
+
+    const div=document.createElement('div');
+    div.className=cls;
+    div.innerHTML=`<div class="lc-main">
+        <div class="lc-num">${leg.leg}</div>
+        <div class="lc-dot" style="${dot}"></div>
+        <div class="lc-info">
+          <div class="lc-runner">${leg.runner}</div>
+          <div class="lc-route">${leg.route}</div>
+        </div>
+        <div class="lc-right">
+          <div class="${tcls}">${tval}</div>
+          <div class="lc-km">${leg.km} km</div>
+        </div>
+        <button class="mine-btn${mine?' on':''}" onclick="setMine(${i})">${mine?'✓ Min':'Min'}</button>
+      </div>
+      <button class="lc-expand" onclick="toggleEdit(${i})">✏️ Rediger</button>
+      <div class="lc-edit" id="le-${i}">
+        <div class="edit-row">
+          <div class="edit-lbl">Løper</div>
+          <input class="edit-inp" id="er-${i}" value="${leg.runner}" placeholder="Navn">
+        </div>
+        <div class="edit-row">
+          <div class="edit-lbl">Est. start</div>
+          <input class="edit-inp mono" id="et-${i}" value="${leg.est}" placeholder="HH:MM:SS">
+        </div>
+        <button class="edit-save" onclick="saveEdit(${i})">Lagre</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+function getNextIdx(){let r=-1;team.forEach((_,i)=>{if(legStatus(i)==='run')r=i});return r>=0&&r<14?r+1:-1}
+function toggleEdit(i){const el=document.getElementById('le-'+i);el.classList.toggle('open')}
+function setMine(i){myLeg=(myLeg===i)?null:i;save();renderPlan()}
+function saveEdit(i){
+  const r=document.getElementById('er-'+i),t=document.getElementById('et-'+i);
+  if(r.value.trim())team[i].runner=r.value.trim();
+  const v=t.value.trim();if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(v))team[i].est=v.includes(':',v.indexOf(':')+1)?v:v+':00';
+  document.getElementById('le-'+i).classList.remove('open');
+  save();renderPlan();
 }
 
-// ═══════════════════════════════════════════════════════════
-// RENDER: SPECTATOR
-// ═══════════════════════════════════════════════════════════
-function renderSpec() {
-  const now=new Date();
-  const race=new Date(2026,4,9,14,50,0), fin=new Date(2026,4,9,16,3,35);
-  const sb=document.getElementById('spec-badge');
-  const nb=document.getElementById('now-banner');
-  const grid=document.getElementById('spec-grid');
+// ═══════ SPECTATOR RENDER ══════════════════════════════════
+function renderSpec(){
+  const now=new Date(),race=new Date(2026,4,9,14,50,0),fin=new Date(2026,4,9,16,3,35);
+  const sb=document.getElementById('spec-badge'),nc=document.getElementById('now-card');
+  let runI=-1;team.forEach((_,i)=>{if(legStatus(i)==='run')runI=i});
+  const nextI=runI>=0&&runI<14?runI+1:-1;
 
-  let runIdx=-1, nextIdx=-1;
-  team.forEach((_,i)=>{ if(legStatus(i)==='run') runIdx=i; });
-  if(runIdx>=0&&runIdx<14) nextIdx=runIdx+1;
-
-  // Status badge
-  if(now<race){
-    sb.className='badge b-wait'; sb.textContent='Venter på start 14:50';
-    nb.style.display='none';
-  } else if(now>fin){
-    sb.className='badge b-done'; sb.textContent='Løpet er ferdig ✓';
-    nb.style.display='none';
-  } else if(runIdx>=0){
-    sb.className='badge b-run'; sb.innerHTML='<span class="live-dot"></span>LIVE';
-    nb.style.display='flex';
-    const leg=team[runIdx], nxt=nextIdx>=0?team[nextIdx]:null;
-    document.getElementById('now-runner').textContent=leg.runner;
-    document.getElementById('now-route').textContent=`Etappe ${leg.leg} · ${leg.route} · ${leg.km} km`;
-    if(nxt){
-      const nextStart=adjStart(nextIdx);
-      const diff=nextStart-now;
+  if(now<race){sb.className='badge b-wait';sb.textContent='Venter på start 14:50';nc.style.display='none';}
+  else if(now>fin){sb.className='badge b-done';sb.textContent='Løpet er ferdig ✓';nc.style.display='none';}
+  else if(runI>=0){
+    sb.className='badge b-run';sb.innerHTML='<span class="ldot"></span>LIVE';
+    nc.style.display='block';
+    const leg=team[runI];
+    document.getElementById('now-nm').textContent=leg.runner;
+    document.getElementById('now-rt').textContent=`Etappe ${leg.leg} · ${leg.route} · ${leg.km} km`;
+    if(nextI>=0){
+      const nx=team[nextI],diff=adjStart(nextI)-now;
       document.getElementById('now-cd').textContent=diff>0?msfmt(diff):'NÅ!';
-      document.getElementById('now-next').textContent=`${nxt.runner} gjør seg klar`;
+      document.getElementById('now-nxt').textContent=nx.runner;
     }
-  } else {
-    sb.className='badge b-amber'; sb.textContent='Mellom etapper';
-    nb.style.display='none';
-  }
+  } else {sb.className='badge b-amber';sb.textContent='Mellom etapper';nc.style.display='none';}
 
-  // Spec grid
-  grid.innerHTML='';
+  const list=document.getElementById('spec-list');
+  list.innerHTML='';
   team.forEach((leg,i)=>{
-    const st=legStatus(i);
-    const adj=adjStart(i), diff=adj-now;
-    const isNext=i===nextIdx;
-    let cls='spec-row';
-    if(st==='run') cls+=' s-run';
-    else if(st==='done') cls+=' s-done';
-    else if(isNext) cls+=' s-next';
+    const st=legStatus(i),isNext=i===nextI,diff=adjStart(i)-now;
+    let cls='spec-card';
+    if(st==='run')cls+=' sc-run';
+    else if(isNext)cls+=' sc-next';
+    else if(st==='done')cls+=' sc-done';
+    const icon=st==='run'?'🏃':isNext?'⚡':st==='done'?'✓':'·';
+    let tval='–',tlbl='';
+    if(st==='done'){tval=actualTimes[i]||fh(adjStart(i));tlbl='Startet';}
+    else if(st==='run'){tval='Løper';tlbl='nå';}
+    else{tval=diff>0?msfmt(diff):'–';tlbl=isNext?'Neste!':'Om ca.';}
 
-    let timeStr='', timeLbl='';
-    if(st==='done'){
-      timeStr=actualTimes[i]?actualTimes[i]:fh(adjStart(i));
-      timeLbl='Faktisk start';
-    } else if(st==='run'){
-      timeStr=msfmt(diff>0?0:Math.abs(diff))||'–';
-      timeLbl='Løper nå';
-    } else {
-      timeStr=diff>0?msfmt(diff):'–';
-      timeLbl=isNext?'Neste løper':'Om ca.';
-    }
-    const icon=st==='run'?'🏃':st==='done'?'✓':isNext?'⚡':'·';
-    grid.innerHTML+=`<div class="${cls}">
-      <div class="spec-num">${icon}</div>
-      <div class="spec-info">
-        <div class="spec-runner">${leg.runner}</div>
-        <div class="spec-route">Et. ${leg.leg} · ${leg.route} · ${leg.km} km</div>
+    list.innerHTML+=`<div class="${cls}">
+      <div class="sc-icon">${icon}</div>
+      <div class="sc-info">
+        <div class="sc-name">${leg.runner}</div>
+        <div class="sc-route">Et.${leg.leg} · ${leg.route} · ${leg.km}km</div>
       </div>
-      <div class="spec-right">
-        <div class="spec-time" style="${st==='run'?'color:var(--red)':isNext?'color:var(--amber)':''}">${timeStr}</div>
-        <div class="spec-label">${timeLbl}</div>
+      <div class="sc-r">
+        <div class="sc-time" style="${st==='run'?'color:var(--red)':isNext?'color:var(--amber)':''}">${tval}</div>
+        <div class="sc-lbl">${tlbl}</div>
       </div>
     </div>`;
   });
-
-  // Refresh counter
-  document.getElementById('spec-refresh').textContent=`Oppdateres om ${30-((Date.now()/1000|0)%30)}s`;
+  document.getElementById('spec-last').textContent=lastFetch?'Sist: '+new Date(lastFetch).toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'}):'';
 }
 
-// ═══════════════════════════════════════════════════════════
-// RENDER: STATISTICS
-// ═══════════════════════════════════════════════════════════
-function renderStat() {
-  const tb=document.getElementById('stat-body');
-  tb.innerHTML='';
-
-  // Find best/worst by pace
-  let bestPace=Infinity, worstPace=0, bestI=-1, worstI=-1;
+// ═══════ STAT RENDER ════════════════════════════════════════
+function renderStat(){
+  let bestP=Infinity,worstP=0,bestI=-1,worstI=-1,totMs=0,totKm=0;
   team.forEach((_,i)=>{
     const ms=splitMs(i);
     if(ms>0&&team[i].km>0){
-      const pace=ms/1000/team[i].km;
-      if(pace<bestPace){bestPace=pace;bestI=i;}
-      if(pace>worstPace){worstPace=pace;worstI=i;}
+      const p=ms/1000/team[i].km;
+      if(p<bestP){bestP=p;bestI=i}
+      if(p>worstP){worstP=p;worstI=i}
+      if(actualTimes[i]){totMs+=ms;totKm+=team[i].km}
     }
-  });
-
-  let totalActualMs=0, doneCount=0;
-  team.forEach((leg,i)=>{
-    const hasDone=actualTimes[i]||legStatus(i)==='done';
-    const devMs=deviationMs(i);
-    const split=splitFmt(i), pace=paceFmt(i);
-    let devCell='<span style="color:#ccc">–</span>';
-    if(devMs!==null){
-      const cls=devMs<0?'dev-pos':'dev-neg';
-      devCell=`<span class="${cls}">${diffFmt(devMs)}</span>`;
-    }
-    const bestBadge=i===bestI?'<span class="best-badge">Raskest</span> ':'';
-    const worstBadge=i===worstI?'<span class="worst-badge">Tregest</span> ':'';
-    const actualCell=`<input class="stat-input" id="sa-${i}" value="${actualTimes[i]||''}" placeholder="HH:MM:SS"
-      onchange="setActual(${i},this.value)" onfocus="this.select()">`;
-
-    if(actualTimes[i]) { totalActualMs+=splitMs(i); doneCount++; }
-
-    const tr=document.createElement('tr');
-    tr.style.opacity=legStatus(i)==='done'&&!actualTimes[i]?'.5':'1';
-    tr.innerHTML=`
-      <td><span class="mono" style="font-size:11px;color:#999">${leg.leg}</span></td>
-      <td style="font-size:12px">${leg.runner}</td>
-      <td><span class="mono" style="font-size:11px;color:#999">${leg.km}</span></td>
-      <td><span class="mono" style="font-size:12px;color:#999">${leg.est}</span></td>
-      <td>${actualCell}</td>
-      <td><span class="mono" style="font-size:12px">${split}</span></td>
-      <td><span class="mono" style="font-size:11px">${bestBadge}${worstBadge}${pace}</span></td>
-      <td>${devCell}</td>
-      <td><button class="mb sm" onclick="clearActual(${i})">✕</button></td>`;
-    tb.appendChild(tr);
   });
 
   // Summary
-  if(actualTimes[0]){
-    const first=td(actualTimes[0]);
-    const lastKey=Object.keys(actualTimes).map(Number).sort((a,b)=>b-a)[0];
-    if(lastKey!==undefined&&lastKey<15){
-      const lastTime=td(actualTimes[lastKey]);
-      // Don't have finish, estimate
-    }
-  }
-
-  // Total from all done legs
-  const totalKm=team.reduce((s,l)=>s+l.km,0);
-  document.getElementById('st-total').textContent=totalActualMs>0?msfmt(totalActualMs):'–';
-  if(totalActualMs>0&&totalKm>0){
-    const avgSec=(totalActualMs/1000)/totalKm;
-    const am=Math.floor(avgSec/60),as=Math.round(avgSec%60);
-    document.getElementById('st-pace').textContent=am+':'+String(as).padStart(2,'0')+'/km';
-  } else { document.getElementById('st-pace').textContent='–'; }
+  document.getElementById('st-tot').textContent=totMs>0?msfmt(totMs):'–';
+  if(totMs>0&&totKm>0){const s=(totMs/1000)/totKm,m=Math.floor(s/60),sc=Math.round(s%60);document.getElementById('st-pc').textContent=`${m}:${String(sc).padStart(2,'0')}`;}
+  else document.getElementById('st-pc').textContent='–';
   document.getElementById('st-pos').textContent=position;
+
+  // Leg cards
+  const list=document.getElementById('stat-list');
+  list.innerHTML='';
+  team.forEach((leg,i)=>{
+    const split=splitFmt(i),pace=paceFmt(i),dv=devMs(i);
+    let devHtml='<span style="color:#ccc">–</span>';
+    if(dv!==null){const cls=dv<0?'sl-dev-pos':'sl-dev-neg';devHtml=`<span class="${cls}">${dfmt(dv)}</span>`;}
+    const bTag=i===bestI?'<span class="best-tag">🏆 Raskest</span>':'';
+    const wTag=i===worstI?'<span class="worst-tag">🐢 Tregest</span>':'';
+
+    const card=document.createElement('div');
+    card.className='stat-leg';
+    card.innerHTML=`<div class="sl-hdr" onclick="toggleStat(${i})">
+        <div class="sl-num">${leg.leg}</div>
+        <div class="sl-info">
+          <div class="sl-name">${leg.runner} ${bTag}${wTag}</div>
+          <div class="sl-km">${leg.route} · ${leg.km} km</div>
+        </div>
+        <div class="sl-r">
+          <div class="sl-split">${split}</div>
+          <div class="sl-pace">${pace}</div>
+        </div>
+      </div>
+      <div class="sl-body" id="sb-${i}">
+        <div class="sl-row"><span class="sl-rlbl">Est. start</span><span class="sl-rval">${leg.est}</span></div>
+        <div class="sl-row"><span class="sl-rlbl">Faktisk start</span>
+          <input class="sl-input" id="sa-${i}" value="${actualTimes[i]||''}" placeholder="HH:MM:SS"
+            onchange="setActual(${i},this.value)">
+        </div>
+        <div class="sl-row"><span class="sl-rlbl">Etappetid</span><span class="sl-rval">${split}</span></div>
+        <div class="sl-row"><span class="sl-rlbl">Tempo</span><span class="sl-rval">${pace}</span></div>
+        <div class="sl-row"><span class="sl-rlbl">Avvik</span>${devHtml}</div>
+        <div class="sl-row"><span class="sl-rlbl">Distanse</span><span class="sl-rval">${leg.km} km</span></div>
+      </div>`;
+    list.appendChild(card);
+  });
 
   // Highlights
   const hl=document.getElementById('highlights');
   if(bestI>=0&&worstI>=0&&bestI!==worstI){
-    hl.innerHTML=`
-      <div style="margin-bottom:8px;padding:8px;background:var(--green-bg);border-radius:8px">
-        🏆 <strong>Raskeste etappe:</strong> ${team[bestI].runner} · Et. ${bestI+1} · ${paceFmt(bestI)} · ${splitFmt(bestI)}
-      </div>
-      <div style="padding:8px;background:var(--red-bg);border-radius:8px">
-        🐢 <strong>Tregest etappe:</strong> ${team[worstI].runner} · Et. ${worstI+1} · ${paceFmt(worstI)} · ${splitFmt(worstI)}
-      </div>`;
-  } else {
-    hl.textContent='Data fylles inn under/etter løpet.';
-  }
+    hl.innerHTML=`<div style="padding:10px;background:var(--green-l);border-radius:8px;margin-bottom:8px">
+      🏆 <strong>Raskest:</strong> ${team[bestI].runner} · Et.${bestI+1} · ${paceFmt(bestI)} · ${splitFmt(bestI)}
+    </div>
+    <div style="padding:10px;background:var(--red-l);border-radius:8px">
+      🐢 <strong>Tregest:</strong> ${team[worstI].runner} · Et.${worstI+1} · ${paceFmt(worstI)} · ${splitFmt(worstI)}
+    </div>`;
+  } else hl.textContent='Fylles inn under løpet.';
 }
-
-// ═══════════════════════════════════════════════════════════
-// RENDER: EDIT
-// ═══════════════════════════════════════════════════════════
-function renderRed() {
-  const l=document.getElementById('red-list');
-  l.innerHTML='';
-  team.forEach((leg,i)=>{
-    const d=document.createElement('div');
-    d.style.cssText='display:grid;grid-template-columns:1.5rem 1fr auto;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0f0';
-    d.innerHTML=`<span style="font-size:11px;color:#999;font-family:monospace">${leg.leg}</span>
-      <input style="font-size:13px;padding:5px 8px;border:1px solid #ddd;border-radius:6px" value="${leg.runner}" id="er${i}">
-      <input style="font-family:monospace;font-size:12px;padding:5px 6px;border:1px solid #ddd;border-radius:6px;width:80px" value="${leg.est}" id="et${i}">`;
-    l.appendChild(d);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════
-// RENDER: HEADER
-// ═══════════════════════════════════════════════════════════
-function renderHdr() {
-  const now=new Date(), race=new Date(2026,4,9,14,50,0), fin=new Date(2026,4,9,16,3,35);
-  const el=document.getElementById('hcd'), ll=document.getElementById('hcl');
-  if(now<race){
-    const d=race-now, dy=Math.floor(d/86400000), h=Math.floor((d%86400000)/3600000), m=Math.floor((d%3600000)/60000);
-    el.textContent=dy>0?dy+'d '+h+'t':String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
-    ll.textContent='til start';
-  } else if(now<=fin){
-    const e=now-race, h=Math.floor(e/3600000), m=Math.floor((e%3600000)/60000), s=Math.floor((e%60000)/1000);
-    el.innerHTML='<span class="live-dot"></span>'+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-    ll.textContent='LØPET PÅGÅR!';
-  } else {
-    el.textContent='✓ Ferdig';
-    ll.textContent=fh(fin);
-  }
-
-  // Refresh counter in footer
-  if(lastFetch){
-    const ago=Math.floor((Date.now()-lastFetch)/1000);
-    document.getElementById('fcnt').textContent=`Sist hentet: ${ago}s siden`;
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// FULL RENDER
-// ═══════════════════════════════════════════════════════════
-function renderAll() {
-  renderHdr();
-  renderPlan();
-  renderSpec();
-  renderStat();
-  updateCdScreen();
-}
-
-// ═══════════════════════════════════════════════════════════
-// COUNTDOWN SCREEN
-// ═══════════════════════════════════════════════════════════
-function openCd() {
-  if(myLeg===null) return;
-  document.getElementById('cdscr').style.display='flex';
-  updateCdScreen();
-  if(cdTimer) clearInterval(cdTimer);
-  cdTimer=setInterval(updateCdScreen,500);
-}
-function closeCd(){
-  document.getElementById('cdscr').style.display='none';
-  if(cdTimer){clearInterval(cdTimer);cdTimer=null;}
-}
-function updateCdScreen(){
-  const scr=document.getElementById('cdscr');
-  if(scr.style.display==='none'||myLeg===null) return;
-  const leg=team[myLeg], adj=adjStart(myLeg), now=new Date(), diff=adj-now, st=legStatus(myLeg);
-  document.getElementById('cd-badge').textContent=`Etappe ${leg.leg} · ${leg.km} km`;
-  document.getElementById('cd-name').textContent=leg.runner;
-  document.getElementById('cd-route').textContent=leg.route;
-  document.getElementById('cd-est').textContent=fh(adj);
-  document.getElementById('cd-km').textContent=leg.km+' km';
-  document.getElementById('cd-now').textContent=fh(now);
-  const ne=document.getElementById('cd-num'), la=document.getElementById('cd-lbl'), sa=document.getElementById('cd-sub'), al=document.getElementById('cd-alrt');
-  if(st==='wait'){
-    scr.className=diff<120000?'s-soon':'s-wait';
-    la.textContent='DU BYTTER OM'; sa.textContent='Estimert start: '+fh(adj);
-    ne.textContent=msfmt(diff)||'00:00';
-    ne.className='cd-num'+(diff<120000?' urgent':'');
-    al.textContent=diff<60000?'⚠️ STÅ KLAR NÅ!':diff<180000?'⚠️ Gå til vekslingssonen!':'Stå klar i god tid!';
-    al.className='cd-alrt'+(diff<180000?' s':' w');
-  } else if(st==='run'){
-    scr.className='s-run'; la.textContent=''; ne.textContent='DU LØPER NÅ!';
-    ne.className='cd-num now'; ne.style.fontSize='clamp(32px,9vw,60px)';
-    sa.textContent='🏃 God løp!'; al.textContent=''; al.className='cd-alrt';
-  } else {
-    scr.className='s-done'; la.textContent=''; ne.textContent='FERDIG ✓';
-    ne.className='cd-num now'; sa.textContent='Bra løpt!'; al.textContent=''; al.className='cd-alrt';
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// EDITING
-// ═══════════════════════════════════════════════════════════
-function editR(i){
-  const td=document.querySelectorAll('#plan-body tr')[i].querySelectorAll('td')[3];
-  td.innerHTML=`<input class="ei" id="ri${i}" value="${team[i].runner}" onblur="svR(${i})" onkeydown="if(event.key==='Enter')svR(${i})">`;
-  document.getElementById('ri'+i).focus();
-}
-function svR(i){const e=document.getElementById('ri'+i);if(e&&e.value.trim()){team[i].runner=e.value.trim();save();renderAll();}}
-function editT(i){
-  const td=document.querySelectorAll('#plan-body tr')[i].querySelectorAll('td')[4];
-  td.innerHTML=`<input class="et" id="ti${i}" value="${team[i].est}" onblur="svT(${i})" onkeydown="if(event.key==='Enter')svT(${i})">`;
-  document.getElementById('ti'+i).focus();
-}
-function svT(i){
-  const e=document.getElementById('ti'+i);if(!e)return;
-  const v=e.value.trim();
-  if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(v)) team[i].est=v.includes(':',v.indexOf(':')+1)?v:v+':00';
-  save();renderAll();
-}
-function setMine(i){myLeg=(myLeg===i)?null:i;save();renderAll();}
+function toggleStat(i){document.getElementById('sb-'+i).classList.toggle('open')}
 function setActual(i,v){
-  if(!v.trim()){delete actualTimes[i];}
-  else if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(v.trim())){
-    actualTimes[i]=v.trim().includes(':',v.indexOf(':')+1)?v.trim():v.trim()+':00';
-  }
-  save();renderAll();
+  const t=v.trim();
+  if(!t){delete actualTimes[i];}
+  else if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(t)) actualTimes[i]=t.includes(':',t.indexOf(':')+1)?t:t+':00';
+  save();renderStat();
 }
-function clearActual(i){
-  delete actualTimes[i];
-  const el=document.getElementById('sa-'+i);if(el)el.value='';
-  save();renderAll();
+
+// ═══════ REDIGER RENDER ════════════════════════════════════
+function renderRed(){
+  const list=document.getElementById('red-list');
+  list.innerHTML='';
+  team.forEach((leg,i)=>{
+    const card=document.createElement('div');
+    card.className='red-card';
+    card.innerHTML=`<div class="red-hdr" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div class="red-num">${leg.leg}</div>
+        <div class="red-name">${leg.runner}</div>
+        <div class="red-time">${leg.est}</div>
+        <span style="color:var(--muted);margin-left:8px">›</span>
+      </div>
+      <div class="red-body" id="rb-${i}">
+        <div class="edit-row">
+          <div class="edit-lbl">Løper</div>
+          <input class="edit-inp" id="rr-${i}" value="${leg.runner}">
+        </div>
+        <div class="edit-row">
+          <div class="edit-lbl">Est. start</div>
+          <input class="edit-inp mono" id="rt-${i}" value="${leg.est}">
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
 }
 function saveAll(){
   team.forEach((_,i)=>{
-    const r=document.getElementById('er'+i),t=document.getElementById('et'+i);
-    if(r&&r.value.trim()) team[i].runner=r.value.trim();
-    if(t){const v=t.value.trim();if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(v)) team[i].est=v.includes(':',v.indexOf(':')+1)?v:v+':00';}
+    const r=document.getElementById('rr-'+i),t=document.getElementById('rt-'+i);
+    if(r&&r.value.trim())team[i].runner=r.value.trim();
+    if(t){const v=t.value.trim();if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(v))team[i].est=v.includes(':',v.indexOf(':')+1)?v:v+':00';}
   });
-  save();renderAll();alert('Lagret!');
+  save();renderPlan();renderRed();alert('Lagret!');
 }
+function clearStats(){actualTimes={};liveAdj=0;position='–';save();renderStat();}
 function resetAll(){team=DEFAULT.map(d=>({...d}));myLeg=null;liveAdj=0;actualTimes={};position='–';save();renderAll();}
-function clearStats(){actualTimes={};liveAdj=0;position='–';save();renderAll();}
 
-// ═══════════════════════════════════════════════════════════
-// PERSISTENCE
-// ═══════════════════════════════════════════════════════════
-function save(){
-  try{localStorage.setItem(SKEY,JSON.stringify({team,myLeg,actualTimes,liveAdj,position}));}catch(e){}
-  document.getElementById('fmsg').textContent='Lagret '+new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'});
-}
-function load(){
-  try{
-    const s=localStorage.getItem(SKEY);
-    if(s){const d=JSON.parse(s);
-      if(d.team&&d.team.length===15) team=d.team;
-      if(d.myLeg!==undefined) myLeg=d.myLeg;
-      if(d.actualTimes) actualTimes=d.actualTimes;
-      if(d.liveAdj) liveAdj=d.liveAdj;
-      if(d.position) position=d.position;
-    }
-  }catch(e){}
+// ═══════ HEADER ════════════════════════════════════════════
+function renderHdr(){
+  const now=new Date(),race=new Date(2026,4,9,14,50,0),fin=new Date(2026,4,9,16,3,35);
+  const el=document.getElementById('hcd'),ll=document.getElementById('hcl');
+  if(now<race){
+    const d=race-now,dy=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m=Math.floor((d%3600000)/60000);
+    el.textContent=dy>0?`${dy}d ${h}t`:`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    ll.textContent='til start';
+  } else if(now<=fin){
+    const e=now-race,h=Math.floor(e/3600000),m=Math.floor((e%3600000)/60000),s=Math.floor((e%60000)/1000);
+    el.innerHTML=`<span class="ldot"></span>${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    ll.textContent='LØPET PÅGÅR!';
+  } else {el.textContent='✓ Ferdig';ll.textContent=fh(fin);}
+  if(lastFetch){const ago=Math.floor((Date.now()-lastFetch)/1000);document.getElementById('fcnt').textContent=`${ago}s siden`;}
 }
 
-// ═══════════════════════════════════════════════════════════
-// LIVE DATA
-// ═══════════════════════════════════════════════════════════
+// ═══════ COUNTDOWN ═════════════════════════════════════════
+function openCd(){if(myLeg===null)return;document.getElementById('cdscr').style.display='flex';updateCd();if(cdTmr)clearInterval(cdTmr);cdTmr=setInterval(updateCd,500);}
+function closeCd(){document.getElementById('cdscr').style.display='none';if(cdTmr){clearInterval(cdTmr);cdTmr=null;}}
+function updateCd(){
+  const scr=document.getElementById('cdscr');
+  if(scr.style.display==='none'||myLeg===null)return;
+  const leg=team[myLeg],adj=adjStart(myLeg),now=new Date(),diff=adj-now,st=legStatus(myLeg);
+  document.getElementById('cd-et').textContent=`Etappe ${leg.leg} · ${leg.km} km`;
+  document.getElementById('cd-nm').textContent=leg.runner;
+  document.getElementById('cd-rt').textContent=leg.route;
+  document.getElementById('cd-est').textContent=fh(adj);
+  document.getElementById('cd-km').textContent=leg.km+' km';
+  document.getElementById('cd-now').textContent=fh(now);
+  const ne=document.getElementById('cd-n'),lb=document.getElementById('cd-lb'),sb=document.getElementById('cd-sb'),al=document.getElementById('cd-al');
+  if(st==='wait'){
+    scr.className=diff<120000?'ss':'sw';lb.textContent='DU BYTTER OM';
+    ne.textContent=msfmt(diff)||'00:00';ne.className='cd-n'+(diff<120000?' urg':'');ne.style.fontSize='';
+    sb.textContent='Estimert start: '+fh(adj);
+    al.textContent=diff<60000?'⚠️ STÅ KLAR NÅ!':diff<180000?'⚠️ Gå til vekslingssonen!':'Stå klar i god tid!';
+    al.className='cd-al'+(diff<180000?' s':' w');
+  } else if(st==='run'){
+    scr.className='sr';lb.textContent='';ne.textContent='DU LØPER NÅ!';ne.className='cd-n now';ne.style.fontSize='clamp(36px,10vw,64px)';sb.textContent='🏃 God løp!';al.textContent='';al.className='cd-al';
+  } else {
+    scr.className='sd';lb.textContent='';ne.textContent='FERDIG ✓';ne.className='cd-n now';ne.style.fontSize='';sb.textContent='Bra løpt! 🎉';al.textContent='';al.className='cd-al';
+  }
+}
+
+// ═══════ LIVE DATA ══════════════════════════════════════════
 async function fetchNow(){
-  document.getElementById('live-badge').textContent='Henter...';
+  document.getElementById('live-badge').innerHTML='<span class="spn"></span>Henter...';
   document.getElementById('live-badge').className='badge b-wait';
   try{
     const p=new URLSearchParams({eventid:EID,mode:'search',search:'Seby Runner',language:'no'});
     const res=await fetch(PROXY+encodeURIComponent(API+'?'+p));
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    if(!res.ok)throw new Error('HTTP '+res.status);
     const html=await res.text();
     const doc=new DOMParser().parseFromString(html,'text/html');
     const rows=[];
-    doc.querySelectorAll('table tr').forEach(tr=>{
-      const cells=Array.from(tr.querySelectorAll('td,th')).map(c=>c.textContent.trim());
-      if(cells.some(c=>c)) rows.push(cells);
-    });
-    processLiveData(rows);
-    renderLiveTable(rows);
+    doc.querySelectorAll('table tr').forEach(tr=>{const c=Array.from(tr.querySelectorAll('td,th')).map(x=>x.textContent.trim());if(c.some(x=>x))rows.push(c);});
+    processLive(rows);renderLiveTable(rows);
     lastFetch=Date.now();
-    refreshCount++;
-    const t=new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const t=new Date(lastFetch).toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('live-badge').innerHTML='<span class="ldot"></span>Live · '+t;
     document.getElementById('live-badge').className='badge b-live';
-    document.getElementById('live-badge').innerHTML=`<span class="live-dot"></span>Live · ${t}`;
     document.getElementById('live-last').textContent=t;
     renderAll();
   }catch(e){
@@ -842,34 +698,25 @@ async function fetchNow(){
     document.getElementById('live-badge').textContent='Feil: '+e.message;
   }
 }
-
-function processLiveData(rows){
-  if(rows.length<2) return;
-  // Extract actual exchange times from Seby rows
-  const sebyRows=rows.slice(1).filter(r=>r.some(c=>c.toLowerCase().includes('seby')));
-  if(!sebyRows.length) return;
-
-  // Find position
-  const posRow=sebyRows[0];
-  const posIdx=posRow.findIndex(c=>/^\d+$/.test(c.trim()));
-  if(posIdx>=0) position=posRow[posIdx];
-
-  // Extract timestamps and match to legs
-  let bestDiff=null, bestI=-1;
-  sebyRows.forEach(row=>{
-    row.forEach(cell=>{
-      const m=cell.match(/(\d{1,2}):(\d{2}):(\d{2})/);
+function processLive(rows){
+  if(rows.length<2)return;
+  const sr=rows.slice(1).filter(r=>r.some(c=>c.toLowerCase().includes('seby')));
+  if(!sr.length)return;
+  const pr=sr[0],pi=pr.findIndex(c=>/^\d+$/.test(c.trim()));
+  if(pi>=0)position=pr[pi];
+  let bestI=-1, bestDiff=null;
+  sr.forEach(function(row){
+    row.forEach(function(cell){
+      var m=cell.match(/(\d{1,2}):(\d{2}):(\d{2})/);
       if(m){
-        const h=parseInt(m[1]),mi=parseInt(m[2]),s=parseInt(m[3]);
-        if(h>=14&&h<=17){
-          const actual=new Date(2026,4,9,h,mi,s);
-          team.forEach((leg,i)=>{
-            const est=td(leg.est);
-            const diff=actual-est;
-            if(Math.abs(diff)<600000&&i>bestI){
+        var h=+m[1], mi=+m[2], s=+m[3];
+        if(h>=14 && h<=17){
+          var actual=new Date(2026,4,9,h,mi,s);
+          team.forEach(function(leg,i){
+            var diff=actual-td(leg.est);
+            if(Math.abs(diff)<600000 && i>bestI){
               bestI=i; bestDiff=diff;
-              // Store actual time
-              if(!actualTimes[i]) actualTimes[i]=`${String(h).padStart(2,'0')}:${String(mi).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+              if(!actualTimes[i]) actualTimes[i]=String(h).padStart(2,'0')+':'+String(mi).padStart(2,'0')+':'+String(s).padStart(2,'0');
             }
           });
         }
@@ -879,59 +726,53 @@ function processLiveData(rows){
   if(bestI>=0) liveAdj=bestDiff;
   save();
 }
-
 function renderLiveTable(rows){
-  if(rows.length<2){
-    document.getElementById('live-area').innerHTML='<p style="color:var(--muted)">Ingen data – prøv igjen under løpet</p>';
-    return;
-  }
-  let h='<div style="overflow-x:auto"><table><thead><tr>'+rows[0].map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
-  rows.slice(1).forEach(r=>{
-    const s=r.some(c=>c.toLowerCase().includes('seby'));
-    h+=`<tr${s?' style="background:rgba(200,16,46,.06);font-weight:600"':''}>`;
-    h+=r.map(c=>`<td style="font-size:12px;padding:5px 7px;border-bottom:1px solid #f0f0f0">${c}</td>`).join('');
-    h+='</tr>';
-  });
+  if(rows.length<2){document.getElementById('live-area').innerHTML='<p style="color:var(--muted);font-size:13px">Ingen data ennå.</p>';return;}
+  let h='<div style="overflow-x:auto"><table class="live-tbl"><thead><tr>'+rows[0].map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+  rows.slice(1).forEach(r=>{const s=r.some(c=>c.toLowerCase().includes('seby'));h+=`<tr class="${s?'seby':''}">${r.map(c=>`<td>${c}</td>`).join('')}</tr>`;});
   h+='</tbody></table></div>';
   document.getElementById('live-area').innerHTML=h;
 }
 
-// ═══════════════════════════════════════════════════════════
-// AUTO REFRESH
-// ═══════════════════════════════════════════════════════════
-function startAutoRefresh(){
-  if(refreshTimer) clearInterval(refreshTimer);
-  refreshTimer=setInterval(()=>{
-    const now=new Date(), race=new Date(2026,4,9,14,40,0), fin=new Date(2026,4,9,16,20,0);
-    if(now>=race&&now<=fin) fetchNow();
-    renderAll();
-  },30000);
+// ═══════ PERSIST ════════════════════════════════════════════
+function save(){
+  try{localStorage.setItem(SKEY,JSON.stringify({team,myLeg,actualTimes,liveAdj,position}));}catch(e){}
+  document.getElementById('fmsg').textContent='Lagret '+new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'});
+}
+function load(){
+  try{const s=localStorage.getItem(SKEY);if(s){const d=JSON.parse(s);if(d.team?.length===15)team=d.team;if(d.myLeg!==undefined)myLeg=d.myLeg;if(d.actualTimes)actualTimes=d.actualTimes;if(d.liveAdj)liveAdj=d.liveAdj;if(d.position)position=d.position;}}catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════════════════
-function gt(id, el){
+// ═══════ TABS ═══════════════════════════════════════════════
+function gt(id,el){
   document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('pg-'+id).classList.add('on');
   el.classList.add('on');
-  if(id==='red') renderRed();
-  if(id==='stat') renderStat();
+  if(id==='red')renderRed();
+  if(id==='stat')renderStat();
+  if(id==='spec')renderSpec();
 }
 
-// ═══════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════
-load();
-renderAll();
-renderRed();
-setInterval(renderAll, 2000);
-startAutoRefresh();
+// ═══════ FULL RENDER ════════════════════════════════════════
+function renderAll(){renderHdr();renderPlan();renderSpec();updateCd();}
 
-// Fetch immediately if race is happening
-const _now=new Date(), _race=new Date(2026,4,9,14,40,0), _fin=new Date(2026,4,9,16,20,0);
-if(_now>=_race&&_now<=_fin) fetchNow();
+// ═══════ AUTO REFRESH ═══════════════════════════════════════
+function startAuto(){
+  if(refTmr)clearInterval(refTmr);
+  refTmr=setInterval(()=>{
+    const n=new Date(),r=new Date(2026,4,9,14,40,0),f=new Date(2026,4,9,16,20,0);
+    if(n>=r&&n<=f)fetchNow();
+    else renderAll();
+  },30000);
+}
+
+// ═══════ INIT ═══════════════════════════════════════════════
+load();renderAll();renderRed();
+setInterval(renderAll,2000);
+startAuto();
+const _n=new Date();
+if(_n>=new Date(2026,4,9,14,40,0)&&_n<=new Date(2026,4,9,16,20,0))fetchNow();
 </script>
 </body>
 </html>
