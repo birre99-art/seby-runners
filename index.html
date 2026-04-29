@@ -63,7 +63,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .b-amber{background:var(--amber-l);color:var(--amber)}
 
 /* ── FULLSCREEN COUNTDOWN ───────────────── */
-#cdscr{display:none;position:fixed;inset:0;z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;transition:background .4s}
+#cdscr{display:none;position:fixed;inset:0;z-index:999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 16px;transition:background .4s;overflow:hidden}
 #cdscr.sw{background:#060e1f}
 #cdscr.ss{background:#300510}
 #cdscr.sr{background:#062006}
@@ -73,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .cd-nm{font-size:clamp(24px,7vw,36px);font-weight:900;color:#fff;margin-bottom:4px}
 .cd-rt{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:36px}
 .cd-lb{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px}
-.cd-n{font-family:monospace;font-size:clamp(72px,22vw,120px);font-weight:900;color:#fff;letter-spacing:4px;line-height:1;transition:color .3s}
+.cd-n{font-family:monospace;font-size:clamp(48px,13vw,80px);font-weight:900;color:#fff;letter-spacing:2px;line-height:1;transition:color .3s;width:100%;text-align:center;white-space:nowrap}
 .cd-n.urg{color:#ff2222;animation:pu 1s ease-in-out infinite}
 .cd-n.now{color:#22ff22;font-size:clamp(40px,12vw,70px)}
 @keyframes pu{0%,100%{opacity:1}50%{opacity:.25}}
