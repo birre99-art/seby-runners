@@ -316,6 +316,7 @@ button{cursor:pointer;font-family:inherit}
       <span style="font-size:11px;color:var(--muted)" id="live-last"></span>
       <button class="btn sm pr" style="margin-left:auto" onclick="fetchNow()">Hent nå ↗</button>
     </div>
+    <div id="proxy-status" style="font-size:11px;color:var(--muted);margin-bottom:10px;display:none"></div>
     <div id="live-area"><p style="color:var(--muted);font-size:13px;line-height:1.6">Henter automatisk hvert 30. sek under løpet etter 14:40.</p></div>
   </div>
 </div>
@@ -344,9 +345,52 @@ button{cursor:pointer;font-family:inherit}
 <script>
 // ═══════ DATA ══════════════════════════════════════════════
 const SKEY='seby_hks26_v5';
-const PROXY='https://corsproxy.io/?url=';
 const API='https://live.ultimate.dk/desktop/front/data.php';
 const EID='6082';
+
+// ── PROXY FALLBACK ─────────────────────────────────────────
+// Prøver proxyer i rekkefølge – første som svarer brukes
+const PROXIES=[
+  url=>`https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+  url=>`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  url=>`https://thingproxy.freeboard.io/fetch/${url}`,
+];
+let lastProxyIdx=0; // husk hvilken som funket sist
+
+async function fetchWithFallback(targetUrl){
+  // Prøv sist fungerende proxy først
+  const order=[lastProxyIdx,...PROXIES.map((_,i)=>i).filter(i=>i!==lastProxyIdx)];
+  const errors=[];
+  for(const idx of order){
+    try{
+      const res=await fetch(PROXIES[idx](targetUrl),{signal:AbortSignal.timeout(6000)});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      const text=await res.text();
+      lastProxyIdx=idx; // lagre hvilken som funket
+      updateProxyStatus(idx,null);
+      return text;
+    }catch(e){
+      errors.push(`Proxy ${idx+1}: ${e.message}`);
+      updateProxyStatus(idx,e.message);
+    }
+  }
+  throw new Error('Alle proxyer feilet: '+errors.join(' | '));
+}
+
+function updateProxyStatus(okIdx,errMsg){
+  const el=document.getElementById('proxy-status');
+  if(!el)return;
+  const names=['corsproxy.io','allorigins.win','thingproxy.io'];
+  if(!errMsg){
+    el.style.display='block';
+    el.style.color='var(--green)';
+    el.textContent=`✓ Kobler via ${names[okIdx]}`;
+  } else {
+    el.style.display='block';
+    el.style.color='var(--amber)';
+    el.textContent=`⚠ Prøver backup-proxy...`;
+  }
+}
 
 const DEFAULT=[
   {leg:1,  km:1.10,route:'Rundt st. haugen',                      runner:'Svein Rune Hagen',          est:'14:50:00'},
@@ -393,7 +437,6 @@ function devMs(i){if(!actualTimes[i])return null;return td(actualTimes[i])-td(te
 
 // ═══════ PLAN RENDER ════════════════════════════════════════
 function renderPlan(){
-  // My leg card
   const mlw=document.getElementById('ml-wrap');
   if(myLeg!==null){
     const leg=team[myLeg],adj=adjStart(myLeg),diff=adj-new Date(),st=legStatus(myLeg);
@@ -406,12 +449,10 @@ function renderPlan(){
     </div>`;
   } else {mlw.innerHTML='';}
 
-  // Delta bar
   const db=document.getElementById('dbar');
   if(liveAdj!==0){db.style.display='block';db.className='dbar '+(liveAdj<0?'a':'b');db.textContent=liveAdj<0?`🟢 Foran estimat ${dfmt(Math.abs(liveAdj))} – tider oppdatert`:`🔴 Bak estimat ${dfmt(liveAdj)} – tider oppdatert`;}
   else db.style.display='none';
 
-  // Leg cards
   const list=document.getElementById('plan-list');
   list.innerHTML='';
   team.forEach((leg,i)=>{
@@ -532,13 +573,11 @@ function renderStat(){
     }
   });
 
-  // Summary
   document.getElementById('st-tot').textContent=totMs>0?msfmt(totMs):'–';
   if(totMs>0&&totKm>0){const s=(totMs/1000)/totKm,m=Math.floor(s/60),sc=Math.round(s%60);document.getElementById('st-pc').textContent=`${m}:${String(sc).padStart(2,'0')}`;}
   else document.getElementById('st-pc').textContent='–';
   document.getElementById('st-pos').textContent=position;
 
-  // Leg cards
   const list=document.getElementById('stat-list');
   list.innerHTML='';
   team.forEach((leg,i)=>{
@@ -575,7 +614,6 @@ function renderStat(){
     list.appendChild(card);
   });
 
-  // Highlights
   const hl=document.getElementById('highlights');
   if(bestI>=0&&worstI>=0&&bestI!==worstI){
     hl.innerHTML=`<div style="padding:10px;background:var(--green-l);border-radius:8px;margin-bottom:8px">
@@ -679,10 +717,9 @@ async function fetchNow(){
   document.getElementById('live-badge').innerHTML='<span class="spn"></span>Henter...';
   document.getElementById('live-badge').className='badge b-wait';
   try{
-    const p=new URLSearchParams({eventid:EID,mode:'search',search:'Seby Runner',language:'no'});
-    const res=await fetch(PROXY+encodeURIComponent(API+'?'+p));
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const html=await res.text();
+    const p=new URLSearchParams({eventid:EID,mode:'search',search:'7410',language:'no'});
+    const targetUrl=API+'?'+p;
+    const html=await fetchWithFallback(targetUrl);
     const doc=new DOMParser().parseFromString(html,'text/html');
     const rows=[];
     doc.querySelectorAll('table tr').forEach(tr=>{const c=Array.from(tr.querySelectorAll('td,th')).map(x=>x.textContent.trim());if(c.some(x=>x))rows.push(c);});
@@ -696,6 +733,8 @@ async function fetchNow(){
   }catch(e){
     document.getElementById('live-badge').className='badge b-err';
     document.getElementById('live-badge').textContent='Feil: '+e.message;
+    const ps=document.getElementById('proxy-status');
+    if(ps){ps.style.display='block';ps.style.color='var(--red)';ps.textContent='⚠ Alle proxyer utilgjengelige – prøv igjen';}
   }
 }
 function processLive(rows){
