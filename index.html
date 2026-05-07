@@ -241,9 +241,15 @@ button{cursor:pointer;font-family:inherit}
 <!-- HEADER -->
 <div class="hdr">
   <img src="apple-touch-icon.png" alt="Seby">
-  <div>
+  <div style="flex:1;min-width:0">
     <div class="hdr-t">Seby Runner's</div>
     <div class="hdr-s">Holmenkollstafetten · 9. mai 2026</div>
+    <div id="hdr-race" style="display:none;margin-top:5px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,.18);border-radius:7px;padding:3px 9px;font-family:monospace;font-size:15px;font-weight:900;letter-spacing:1px" id="hdr-elapsed">00:00:00</div>
+        <div style="font-size:12px;opacity:.8;font-weight:700" id="hdr-leginfo">–</div>
+      </div>
+    </div>
   </div>
   <div class="hdr-r">
     <div class="hdr-cd" id="hcd">–</div>
@@ -673,15 +679,41 @@ function resetAll(){team=DEFAULT.map(d=>({...d}));myLeg=null;liveAdj=0;actualTim
 function renderHdr(){
   const now=new Date(),race=new Date(2026,4,9,14,50,0),fin=new Date(2026,4,9,16,3,35);
   const el=document.getElementById('hcd'),ll=document.getElementById('hcl');
+  const raceEl=document.getElementById('hdr-race');
+  const elapsedEl=document.getElementById('hdr-elapsed');
+  const legEl=document.getElementById('hdr-leginfo');
+
   if(now<race){
     const d=race-now,dy=Math.floor(d/86400000),h=Math.floor((d%86400000)/3600000),m=Math.floor((d%3600000)/60000);
     el.textContent=dy>0?`${dy}d ${h}t`:`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
     ll.textContent='til start';
+    if(raceEl)raceEl.style.display='none';
   } else if(now<=fin){
+    // Akkumulert løpstid
     const e=now-race,h=Math.floor(e/3600000),m=Math.floor((e%3600000)/60000),s=Math.floor((e%60000)/1000);
     el.innerHTML=`<span class="ldot"></span>${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     ll.textContent='LØPET PÅGÅR!';
-  } else {el.textContent='✓ Ferdig';ll.textContent=fh(fin);}
+    // Race info bar
+    if(raceEl)raceEl.style.display='block';
+    if(elapsedEl)elapsedEl.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    // Finn aktiv etappe
+    let runI=-1;team.forEach((_,i)=>{if(legStatus(i)==='run')runI=i});
+    if(legEl){
+      if(runI>=0){
+        const leg=team[runI];
+        const nextI=runI<14?runI+1:-1;
+        const nxt=nextI>=0?team[nextI]:null;
+        const diff=nextI>=0?adjStart(nextI)-now:0;
+        const cdStr=diff>0?msfmt(diff):'NÅ';
+        legEl.innerHTML=`Et.${leg.leg} 🏃 ${leg.runner}${nxt?' → '+nxt.runner+' om '+cdStr:''}`;
+      } else {
+        legEl.textContent='Mellom etapper';
+      }
+    }
+  } else {
+    el.textContent='✓ Ferdig';ll.textContent=fh(fin);
+    if(raceEl)raceEl.style.display='none';
+  }
   if(lastFetch){const ago=Math.floor((Date.now()-lastFetch)/1000);document.getElementById('fcnt').textContent=`${ago}s siden`;}
 }
 
