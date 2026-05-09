@@ -369,7 +369,7 @@ async function fetchWithFallback(targetUrl){
   const errors=[];
   for(const idx of order){
     try{
-      const res=await fetch(PROXIES[idx](targetUrl),{signal:AbortSignal.timeout(6000)});
+      const res=await fetch(PROXIES[idx](targetUrl));
       if(!res.ok)throw new Error('HTTP '+res.status);
       const text=await res.text();
       lastProxyIdx=idx; // lagre hvilken som funket
@@ -749,12 +749,36 @@ async function fetchNow(){
   document.getElementById('live-badge').innerHTML='<span class="spn"></span>Henter...';
   document.getElementById('live-badge').className='badge b-wait';
   try{
-    const p=new URLSearchParams({eventid:EID,mode:'search',search:'7410',language:'no'});
-    const targetUrl=API+'?'+p;
-    const html=await fetchWithFallback(targetUrl);
-    const doc=new DOMParser().parseFromString(html,'text/html');
-    const rows=[];
-    doc.querySelectorAll('table tr').forEach(tr=>{const c=Array.from(tr.querySelectorAll('td,th')).map(x=>x.textContent.trim());if(c.some(x=>x))rows.push(c);});
+    // Prøv teamresult først, fallback til search
+    let html='', rows=[], ok=false;
+    for(const mode of ['teamresult','search']){
+      try{
+        const q=mode==='teamresult'
+          ? new URLSearchParams({eventid:EID,mode:'teamresult',raceno:'7410',language:'no'})
+          : new URLSearchParams({eventid:EID,mode:'search',search:'7410',language:'no'});
+        const text=await fetchWithFallback(API+'?'+q);
+        const doc=new DOMParser().parseFromString(text,'text/html');
+        const r=[];
+        doc.querySelectorAll('table tr').forEach(tr=>{const c=Array.from(tr.querySelectorAll('td,th')).map(x=>x.textContent.trim());if(c.some(x=>x))r.push(c);});
+        if(r.length>1){rows=r;html=text;ok=true;break;}
+        // Vis rå HTML for debugging hvis ingen tabell
+        if(mode==='search'&&!ok){
+          document.getElementById('live-area').innerHTML='<pre style="font-size:10px;overflow:auto;max-height:300px">'+text.substring(0,2000)+'</pre>';
+        }
+      }catch(e){console.warn('mode '+mode+' failed:',e);}
+    }
+    if(!ok||rows.length<2){
+      document.getElementById('live-badge').className='badge b-err';
+      document.getElementById('live-badge').textContent='Ingen tabelldata – se rå svar';
+      // Vis rå HTML for debugging
+      try{
+        const dbg=await fetchWithFallback(API+'?'+new URLSearchParams({eventid:EID,mode:'search',search:'7410',language:'no'}));
+        document.getElementById('live-area').innerHTML='<pre style="font-size:9px;overflow:auto;max-height:400px;white-space:pre-wrap;background:#111;color:#0f0;padding:8px;border-radius:6px">'+dbg.substring(0,3000)+'</pre>';
+      }catch(e2){
+        document.getElementById('live-area').innerHTML='<p style="color:red;font-size:12px">Debug fetch feilet: '+e2.message+'</p>';
+      }
+      return;
+    }
     processLive(rows);renderLiveTable(rows);
     lastFetch=Date.now();
     const t=new Date(lastFetch).toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
