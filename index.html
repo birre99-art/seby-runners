@@ -749,44 +749,31 @@ async function fetchNow(){
   document.getElementById('live-badge').innerHTML='<span class="spn"></span>Henter...';
   document.getElementById('live-badge').className='badge b-wait';
   try{
-    // Hent rå svar og vis det alltid for debugging
     const q=new URLSearchParams({eventid:EID,mode:'teamresult',raceno:'7410',language:'no'});
     const rawText=await fetchWithFallback(API+'?'+q);
-    // Vis råsvar umiddelbart
-    document.getElementById('live-area').innerHTML=
-      '<pre style="font-size:9px;overflow:auto;max-height:400px;white-space:pre-wrap;background:#111;color:#0f0;padding:8px;border-radius:6px;border-radius:8px">TEAMRESULT:
-'+rawText.substring(0,2500)+'</pre>';
-    // Prøv også search-mode
-    const q2=new URLSearchParams({eventid:EID,mode:'search',search:'7410',language:'no'});
-    const rawText2=await fetchWithFallback(API+'?'+q2);
-    document.getElementById('live-area').innerHTML+=
-      '<pre style="font-size:9px;overflow:auto;max-height:400px;white-space:pre-wrap;background:#111;color:#ff0;padding:8px;border-radius:6px;margin-top:8px">SEARCH:
-'+rawText2.substring(0,2500)+'</pre>';
-    // Parse tabeller fra begge
-    let rows=[], ok=false;
-    for(const txt of [rawText, rawText2]){
-      const doc=new DOMParser().parseFromString(txt,'text/html');
-      const r=[];
-      doc.querySelectorAll('table tr').forEach(tr=>{const c=Array.from(tr.querySelectorAll('td,th')).map(x=>x.textContent.trim());if(c.some(x=>x))r.push(c);});
-      if(r.length>1){rows=r;ok=true;break;}
-    }
-    if(!ok){
-      document.getElementById('live-badge').className='badge b-err';
-      document.getElementById('live-badge').textContent='Ingen tabell – se rå dump';
-      return;
-    }
-    processLive(rows);renderLiveTable(rows);
+    const pre=document.createElement('pre');
+    pre.style.cssText='font-size:9px;overflow:auto;max-height:400px;white-space:pre-wrap;background:#111;color:#0f0;padding:8px;border-radius:6px';
+    pre.textContent='TEAMRESULT:\n'+rawText.substring(0,3000);
+    document.getElementById('live-area').innerHTML='';
+    document.getElementById('live-area').appendChild(pre);
+    const doc=new DOMParser().parseFromString(rawText,'text/html');
+    const rows=[];
+    doc.querySelectorAll('table tr').forEach(tr=>{const c=Array.from(tr.querySelectorAll('td,th')).map(x=>x.textContent.trim());if(c.some(x=>x))rows.push(c);});
     lastFetch=Date.now();
     const t=new Date(lastFetch).toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    document.getElementById('live-badge').innerHTML='<span class="ldot"></span>Live · '+t;
-    document.getElementById('live-badge').className='badge b-live';
     document.getElementById('live-last').textContent=t;
-    renderAll();
+    if(rows.length>1){
+      processLive(rows);
+      document.getElementById('live-badge').innerHTML='<span class="ldot"></span>Live \xb7 '+t;
+      document.getElementById('live-badge').className='badge b-live';
+      renderAll();
+    } else {
+      document.getElementById('live-badge').className='badge b-err';
+      document.getElementById('live-badge').textContent='Ingen tabell \u2013 se dump';
+    }
   }catch(e){
     document.getElementById('live-badge').className='badge b-err';
     document.getElementById('live-badge').textContent='Feil: '+e.message;
-    const ps=document.getElementById('proxy-status');
-    if(ps){ps.style.display='block';ps.style.color='var(--red)';ps.textContent='⚠ Alle proxyer utilgjengelige – prøv igjen';}
   }
 }
 function processLive(rows){
